@@ -1,35 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import {computed} from 'vue';
+import {useAccountStore} from '@/store/accountStore';
 
-interface Account {
-  labels: string;
-  type: string;
-  login: string;
-  password: string | null;
-}
-
-const accounts = ref<Account[]>([
-  {
-    labels: '',
-    type: 'Локальная',
-    login: '',
-    password: ''
-  }
-]);
+const store = useAccountStore();
+const accounts = computed(() => store.accounts);
 
 const addAccount = () => {
-  accounts.value.push({
-    labels: '',
-    type: 'Локальная',
-    login: '',
-    password: ''
-  });
+  store.addAccount();
 };
 
 const removeAccount = (index: number) => {
-  accounts.value.splice(index, 1);
+  store.removeAccount(index);
 };
-
 </script>
 
 <template>
@@ -63,23 +45,38 @@ const removeAccount = (index: number) => {
             <v-row>
               <v-col cols="12" sm="3">
                 <v-text-field
+                    v-model="account.label"
                     label="Метки"
                     placeholder="например, admin;user"
+                    maxlength="50"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="3">
                 <v-select
+                    v-model="account.type"
                     :items="['LDAP', 'Локальная']"
                     label="Тип записи"
+                    @update:modelValue="store.updateType(index, $event)"
                 ></v-select>
               </v-col>
               <v-col cols="12" sm="3">
-                <v-text-field label="Логин"></v-text-field>
+                <v-text-field
+                    v-model="account.login"
+                    label="Логин"
+                    :rules="[() => !!account.login || 'Логин обязателен']"
+                    maxlength="100"
+                ></v-text-field>
               </v-col>
               <v-col cols="12" sm="2">
-                <v-text-field label="Пароль" type="password"></v-text-field>
+                <v-text-field
+                    v-if="account.type === 'Локальная'"
+                    v-model="account.password"
+                    label="Пароль"
+                    type="password"
+                    :rules="[() => !!account.password || 'Пароль обязателен']"
+                    maxlength="100"
+                ></v-text-field>
               </v-col>
-
               <v-col cols="12" sm="1" class="text-right">
                 <v-btn icon @click="removeAccount(index)">
                   <v-icon>mdi-delete</v-icon>
@@ -92,5 +89,3 @@ const removeAccount = (index: number) => {
     </v-row>
   </v-container>
 </template>
-
-
