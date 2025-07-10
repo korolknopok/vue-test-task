@@ -1,29 +1,23 @@
-# vue-test-task
+Vue Test Task
 
-This template should help get you started developing with Vue 3 in Vite.
+Реализована форма управления учётными записями. Пользователь может добавить запись, удалить запись, а также заполнить необходимую информацию
 
-## Recommended IDE Setup
+Технологический стек: Vue.js 3 + Composition API, TypeScript, Pinia, Vuetify
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+### Установка и запуск
+1. Клонирование проекта
+```
+git clone: https://github.com/korolknopok/vue-test-task.git
+```
+2. Установка зависимостей:
+```
 npm install
 ```
-
-### Compile and Hot-Reload for Development
-
-```sh
+3. Запустите приложение:
+```
 npm run dev
 ```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
+4. Откройте браузер:
+```
+http://localhost:5173
 ```
