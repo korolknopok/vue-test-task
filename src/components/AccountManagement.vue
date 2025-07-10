@@ -45,10 +45,17 @@ const removeAccount = (index: number) => {
             <v-row>
               <v-col cols="12" sm="3">
                 <v-text-field
-                    v-model="account.label"
                     label="Метки"
                     placeholder="например, admin;user"
                     maxlength="50"
+                    :model-value="Array.isArray(account.label) ? account.label.map(l => l.text).join(';') : ''"
+                    @update:modelValue="val => {
+                      account.label = val
+                      .split(';')
+                      .map(s => s.trim())
+                      .filter(Boolean)
+                      .map(text => ({ text }));
+                    }"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="3">
