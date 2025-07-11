@@ -4,7 +4,7 @@ import {useAccountStore} from '@/store/accountStore';
 
 const store = useAccountStore();
 const accounts = computed(() => store.accounts);
-const fromRefs = ref<Record<number, any>>({});
+const formRefs = ref<Record<number, any>>({});
 
 const addAccount = () => {
   store.addAccount();
@@ -15,11 +15,13 @@ const removeAccount = (index: number) => {
 };
 
 const validate = async (index: number) => {
-  const form = fromRefs.value[index];
+  const form = formRefs.value[index];
   if (form) {
     const valid = await form.validate();
     if (!valid.valid) {
-      console.log('Ошибка валидации: ', valid.error);
+      console.log('Ошибка валидации: ', valid.errors);
+    } else {
+      store.save();
     }
     return valid.valid;
   }
