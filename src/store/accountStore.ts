@@ -1,8 +1,7 @@
 import {defineStore} from 'pinia';
-import {ref} from 'vue';
 
 export interface Account {
-    label: {text: string}[];
+    label: { text: string }[];
     type: string;
     login: string;
     password: string | null;
@@ -32,13 +31,20 @@ export const useAccountStore = defineStore('account', {
             this.accounts.splice(index, 1);
         },
         updateType(index: number, type: string) {
-            const account = { ...this.accounts[index], type };
+            const account = {...this.accounts[index], type};
             if (type === 'LDAP') {
                 account.password = null;
             } else {
                 account.password = account.password || '';
             }
             this.accounts[index] = account;
+        },
+        isValid(index: number) {
+            const account = this.accounts[index];
+            return (
+                !!account.login &&
+                (account.type === 'LDAP' || !!account.password)
+            );
         },
     },
     persist: {

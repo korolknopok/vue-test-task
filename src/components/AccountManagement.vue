@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import {computed} from 'vue';
+import {computed, ref} from 'vue';
 import {useAccountStore} from '@/store/accountStore';
 
 const store = useAccountStore();
 const accounts = computed(() => store.accounts);
+const fromRefs = ref<Record<number, any>>({});
 
 const addAccount = () => {
   store.addAccount();
@@ -12,6 +13,18 @@ const addAccount = () => {
 const removeAccount = (index: number) => {
   store.removeAccount(index);
 };
+
+const validate = async (index: number) => {
+  const form = fromRefs.value[index];
+  if (form) {
+    const valid = await form.validate();
+    if (!valid.valid) {
+      console.log('Ошибка валидации: ', valid.error);
+    }
+    return valid.valid;
+  }
+  return store.isValid(index);
+}
 </script>
 
 <template>
@@ -55,7 +68,9 @@ const removeAccount = (index: number) => {
                       .map(s => s.trim())
                       .filter(Boolean)
                       .map(text => ({ text }));
+                      validate(index);
                     }"
+                    @blur="validate(index)"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="3">
@@ -63,7 +78,10 @@ const removeAccount = (index: number) => {
                     v-model="account.type"
                     :items="['LDAP', 'Локальная']"
                     label="Тип записи"
-                    @update:modelValue="store.updateType(index, $event)"
+                    @update:modelValue="val => {
+                      store.updateType(index, val);
+                      validate(index);
+                    }"
                 ></v-select>
               </v-col>
               <v-col cols="12" sm="3">
@@ -72,6 +90,7 @@ const removeAccount = (index: number) => {
                     label="Логин"
                     :rules="[() => !!account.login || 'Логин обязателен']"
                     maxlength="100"
+                    @blur="validate(index)"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="2">
@@ -82,6 +101,7 @@ const removeAccount = (index: number) => {
                     type="password"
                     :rules="[() => !!account.password || 'Пароль обязателен']"
                     maxlength="100"
+                    @blur="validate(index)"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="1" class="text-right">
